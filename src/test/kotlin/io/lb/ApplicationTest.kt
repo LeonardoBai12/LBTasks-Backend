@@ -1,4 +1,4 @@
-package com.example
+package io.lb
 
 import com.example.plugins.*
 import io.ktor.client.request.*

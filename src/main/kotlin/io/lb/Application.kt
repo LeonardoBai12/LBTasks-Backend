@@ -1,9 +1,11 @@
-package com.example
+package io.lb
 
-import com.example.plugins.*
-import io.ktor.server.application.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import io.ktor.server.application.Application
+import io.ktor.server.engine.embeddedServer
+import io.ktor.server.netty.Netty
+import io.lb.plugins.configureDatabases
+import io.lb.plugins.configureMonitoring
+import io.lb.plugins.configureSerialization
 
 fun main() {
     embeddedServer(
@@ -17,8 +19,5 @@ fun main() {
 fun Application.module() {
     configureSerialization()
     configureDatabases()
-    configureSockets()
     configureMonitoring()
-    configureSecurity()
-    configureRouting()
 }

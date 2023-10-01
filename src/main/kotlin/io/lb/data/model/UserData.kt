@@ -1,9 +1,10 @@
-package com.example.data.models
+package io.lb.data.model
 
-import java.util.UUID
+import kotlinx.serialization.Serializable
 
-data class User(
-    val userId: UUID,
+@Serializable
+data class UserData(
+    val id: String,
     val userName: String,
     val email: String,
     val profilePicture: ByteArray?
@@ -14,9 +15,9 @@ data class User(
         if (javaClass != other?.javaClass)
             return false
 
-        other as User
+        other as UserData
 
-        if (userId != other.userId)
+        if (id != other.id)
             return false
         if (userName != other.userName)
             return false
@@ -34,7 +35,7 @@ data class User(
     }
 
     override fun hashCode(): Int {
-        var result = userId.hashCode()
+        var result = id.hashCode()
         result = 31 * result + userName.hashCode()
         result = 31 * result + email.hashCode()
         result = 31 * result + (profilePicture?.contentHashCode() ?: 0)
