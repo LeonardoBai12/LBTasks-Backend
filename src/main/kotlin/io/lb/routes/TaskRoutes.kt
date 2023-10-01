@@ -20,7 +20,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
     val taskService = TaskService(dbConnection)
 
     routing {
-        post("/task") {
+        post("/api/createTask") {
             val task = call.receiveNullable<TaskCreateRequest>() ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
@@ -29,7 +29,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
             call.respond(HttpStatusCode.Created, id)
         }
 
-        get("/task/{id}") {
+        get("/api/task/{id}") {
             val id = call.parameters["id"] ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
@@ -42,7 +42,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
             }
         }
 
-        get("/tasksByUser/{id}") {
+        get("/api/tasksByUser/{id}") {
             try {
                 val userId = call.parameters["id"] ?: run {
                     call.respond(HttpStatusCode.BadRequest)
@@ -55,7 +55,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
             }
         }
 
-        put("/task/{id}") {
+        put("/api/updateTask/{id}") {
             val id = call.parameters["id"] ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@put
@@ -65,7 +65,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
             call.respond(HttpStatusCode.OK)
         }
 
-        delete("/task/{id}") {
+        delete("/api/deleteTask/{id}") {
             val id = call.parameters["id"] ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
