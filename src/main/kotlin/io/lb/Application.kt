@@ -20,8 +20,8 @@ fun main() {
 
 fun Application.module() {
     configureSerialization()
-    configureDatabases()
     configureMonitoring()
     configureAuth()
     configureSession()
+    configureDatabases()
 }

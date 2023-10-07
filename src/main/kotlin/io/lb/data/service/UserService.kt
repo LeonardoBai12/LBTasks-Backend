@@ -45,19 +45,19 @@ class UserService(
         val statement = connection.prepareStatement(UPDATE_USER)
         statement.setString(1, user.userName)
         statement.setString(2, user.email)
-        statement.setString(3, user.userId)
+        statement.setObject(3, UUID.fromString(user.userId))
         statement.executeUpdate()
     }
 
     suspend fun deleteUser(userId: String) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_USER)
-        statement.setString(1, userId)
+        statement.setObject(1, UUID.fromString(userId))
         statement.executeUpdate()
     }
 
     suspend fun getUserById(userId: String): UserData? = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_USER_BY_ID)
-        statement.setString(1, userId)
+        statement.setObject(1, UUID.fromString(userId))
         val resultSet = statement.executeQuery()
 
         return@withContext if (resultSet.next()) {

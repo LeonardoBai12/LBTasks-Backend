@@ -30,7 +30,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
             call.respond(HttpStatusCode.Created, id)
         }
 
-        get("/api/task/{id}") {
+        get("/api/task") {
             val id = call.parameters["id"] ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
@@ -56,7 +56,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
             }
         }
 
-        put("/api/updateTask/{id}") {
+        put("/api/updateTask") {
             val id = call.parameters["id"] ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@put
@@ -66,7 +66,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
             call.respond(HttpStatusCode.OK)
         }
 
-        delete("/api/deleteTask/{id}") {
+        delete("/api/deleteTask") {
             val id = call.parameters["id"] ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete

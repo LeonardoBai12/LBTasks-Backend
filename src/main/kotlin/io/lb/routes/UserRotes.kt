@@ -29,17 +29,16 @@ fun Application.userRoutes(dbConnection: Connection) {
                 return@post
             }
             val hashedPassword = user.password.encrypt()
-            userService.createUser(
-                UserData(
-                    userName = user.userName,
-                    password = hashedPassword,
-                    email = user.email
-                )
+            val userData = UserData(
+                userName = user.userName,
+                password = hashedPassword,
+                email = user.email
             )
-            call.respond(HttpStatusCode.Created, "User created successfully")
+            userService.createUser(userData)
+            call.respond(HttpStatusCode.Created, userData.userId)
         }
 
-        get("/api/user/{userId}") {
+        get("/api/user") {
             val userId = call.parameters["userId"] ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
@@ -49,24 +48,30 @@ fun Application.userRoutes(dbConnection: Connection) {
             } ?: call.respond(HttpStatusCode.NotFound)
         }
 
-        put("/api/updateUser/{userId}") {
+        put("/api/updateUser") {
             val userId = call.parameters["userId"] ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@put
             }
-            val user = call.receive<UserData>()
+            val user = call.receiveNullable<UserCreateRequest>() ?: run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@put
+            }
             val storedUser = userService.getUserById(userId)
 
             storedUser?.takeIf {
-                user.password!!.passwordCheck(it.password!!)
+                user.password.passwordCheck(it.password!!)
             }?.let {
-                val updatedUser = user.copy(userId = userId, password = it.password)
+                val updatedUser = storedUser.copy(
+                    userName = it.userName,
+                    email = it.email,
+                )
                 userService.updateUser(updatedUser)
-                call.respond(HttpStatusCode.OK, "User updated successfully")
+                call.respond(HttpStatusCode.OK, userId)
             } ?: call.respond(HttpStatusCode.Unauthorized, "Invalid password")
         }
 
-        delete("/api/deleteUser/{userId}") {
+        delete("/api/deleteUser") {
             val userId = call.parameters["userId"] ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
