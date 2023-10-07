@@ -2,6 +2,7 @@ package io.lb.data.service
 
 import io.lb.data.model.UserData
 import java.sql.Connection
+import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -13,13 +14,14 @@ class UserService(
             "CREATE TABLE IF NOT EXISTS user_data ( " +
                     "     user_id UUID PRIMARY KEY, " +
                     "     user_name VARCHAR(255) NOT NULL, " +
-                    "     email VARCHAR(255) UNIQUE NOT NULL, " +
-                    "     profile_picture BYTEA " +
+                    "     password VARCHAR(255) NOT NULL, " +
+                    "     profile_picture VARCHAR(255), " +
+                    "     email VARCHAR(255) UNIQUE NOT NULL " +
                     ");"
         private const val SELECT_USER_BY_ID =
             "SELECT user_id, user_name, email FROM user_data WHERE user_id = ?;"
         private const val INSERT_USER =
-            "INSERT INTO user_data (user_id, user_name, email) VALUES (?, ?, ?);"
+            "INSERT INTO user_data (user_id, user_name, password, email) VALUES (?, ?, ?, ?);"
         private const val UPDATE_USER =
             "UPDATE user_data SET user_name = ?, email = ? WHERE user_id = ?;"
         private const val DELETE_USER = "DELETE FROM user_data WHERE user_id = ?;"
@@ -32,9 +34,10 @@ class UserService(
 
     suspend fun createUser(user: UserData) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_USER)
-        statement.setString(1, user.userId)
+        statement.setObject(1, UUID.fromString(user.userId))
         statement.setString(2, user.userName)
-        statement.setString(3, user.email)
+        statement.setString(3, user.password)
+        statement.setString(4, user.email)
         statement.executeUpdate()
     }
 

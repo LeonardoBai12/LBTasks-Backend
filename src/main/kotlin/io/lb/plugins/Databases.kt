@@ -12,8 +12,8 @@ import java.util.*
 
 fun Application.configureDatabases() {
     val dbConnection = connectToPostgres(embedded = true).connection
-    taskRoutes(dbConnection)
     userRoutes(dbConnection)
+    taskRoutes(dbConnection)
 }
 
 fun Application.connectToPostgres(embedded: Boolean): HikariDataSource {

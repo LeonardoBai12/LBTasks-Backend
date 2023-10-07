@@ -12,6 +12,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
+import io.lb.data.model.UserCreateRequest
 import io.lb.data.model.UserData
 import io.lb.data.service.UserService
 import io.lb.extensions.encrypt
@@ -23,12 +24,18 @@ fun Application.userRoutes(dbConnection: Connection) {
 
     routing {
         post("/api/createUser") {
-            val user = call.receiveNullable<UserData>() ?: run {
+            val user = call.receiveNullable<UserCreateRequest>() ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
-            val hashedPassword = user.password?.encrypt()
-            userService.createUser(user.copy(password = hashedPassword))
+            val hashedPassword = user.password.encrypt()
+            userService.createUser(
+                UserData(
+                    userName = user.userName,
+                    password = hashedPassword,
+                    email = user.email
+                )
+            )
             call.respond(HttpStatusCode.Created, "User created successfully")
         }
 
