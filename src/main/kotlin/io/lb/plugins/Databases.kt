@@ -28,17 +28,21 @@ fun Application.connectToPostgres(embedded: Boolean): HikariDataSource {
         val databaseUsername = properties.getProperty("database.username")
         val databasePassword = properties.getProperty("database.password")
 
-        hikariConfig.jdbcUrl = databaseUrl
-        hikariConfig.username = databaseUsername
-        hikariConfig.password = databasePassword
+        hikariConfig.apply {
+            jdbcUrl = databaseUrl
+            username = databaseUsername
+            password = databasePassword
+        }
     } else {
-        val url = environment.config.property("postgres.url").getString()
-        val user = environment.config.property("postgres.user").getString()
-        val password = environment.config.property("postgres.password").getString()
+        val databaseUrl = environment.config.property("postgres.url").getString()
+        val databaseUsername = environment.config.property("postgres.user").getString()
+        val databasePassword = environment.config.property("postgres.password").getString()
 
-        hikariConfig.jdbcUrl = url
-        hikariConfig.username = user
-        hikariConfig.password = password
+        hikariConfig.apply {
+            jdbcUrl = databaseUrl
+            username = databaseUsername
+            password = databasePassword
+        }
     }
 
     return HikariDataSource(hikariConfig)
