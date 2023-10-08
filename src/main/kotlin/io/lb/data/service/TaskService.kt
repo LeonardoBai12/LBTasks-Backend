@@ -50,13 +50,16 @@ class TaskService(private val connection: Connection) {
 
     suspend fun insertTask(task: TaskCreateRequest): String = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_TASK, Statement.RETURN_GENERATED_KEYS)
-        statement.setObject(1, UUID.fromString(task.title))
-        statement.setObject(2, UUID.fromString(task.userId))
-        statement.setString(3, task.description)
-        statement.setString(4, task.taskType)
-        statement.setString(5, task.deadlineDate)
-        statement.setString(6, task.deadlineTime)
-        statement.executeUpdate()
+
+        with(statement) {
+            setObject(1, UUID.fromString(task.title))
+            setObject(2, UUID.fromString(task.userId))
+            setString(3, task.description)
+            setString(4, task.taskType)
+            setString(5, task.deadlineDate)
+            setString(6, task.deadlineTime)
+            executeUpdate()
+        }
 
         val generatedKeys = statement.generatedKeys
         if (generatedKeys.next()) {
@@ -124,18 +127,20 @@ class TaskService(private val connection: Connection) {
     }
 
     suspend fun updateTask(id: String, task: TaskData) = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(UPDATE_TASK)
-        statement.setString(1, task.title)
-        statement.setString(2, task.description)
-        statement.setString(3, task.deadlineDate)
-        statement.setString(4, task.deadlineTime)
-        statement.setObject(5, UUID.fromString(id))
-        statement.executeUpdate()
+        with(connection.prepareStatement(UPDATE_TASK)) {
+            setString(1, task.title)
+            setString(2, task.description)
+            setString(3, task.deadlineDate)
+            setString(4, task.deadlineTime)
+            setObject(5, UUID.fromString(id))
+            executeUpdate()
+        }
     }
 
     suspend fun deleteTask(id: String) = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(DELETE_TASK)
-        statement.setObject(1, UUID.fromString(id))
-        statement.executeUpdate()
+        with(connection.prepareStatement(DELETE_TASK)) {
+            setObject(1, UUID.fromString(id))
+            executeUpdate()
+        }
     }
 }

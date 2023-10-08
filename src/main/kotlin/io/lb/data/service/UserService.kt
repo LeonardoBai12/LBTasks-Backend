@@ -43,18 +43,20 @@ class UserService(
     }
 
     suspend fun updateUser(user: UserData) = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(UPDATE_USER)
-        statement.setString(1, user.userName)
-        statement.setString(2, user.email)
-        statement.setNString(3, user.profilePictureUrl)
-        statement.setObject(4, UUID.fromString(user.userId))
-        statement.executeUpdate()
+        with(connection.prepareStatement(UPDATE_USER)) {
+            setString(1, user.userName)
+            setString(2, user.email)
+            setNString(3, user.profilePictureUrl)
+            setObject(4, UUID.fromString(user.userId))
+            executeUpdate()
+        }
     }
 
     suspend fun deleteUser(userId: String) = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(DELETE_USER)
-        statement.setObject(1, UUID.fromString(userId))
-        statement.executeUpdate()
+        with(connection.prepareStatement(DELETE_USER)) {
+            setObject(1, UUID.fromString(userId))
+            executeUpdate()
+        }
     }
 
     suspend fun getUserById(userId: String): UserData? = withContext(Dispatchers.IO) {
