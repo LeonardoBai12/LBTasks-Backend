@@ -38,7 +38,7 @@ class UserService(
             setString(2, user.userName)
             setString(3, user.password)
             setString(4, user.email)
-            setNString(5, user.profilePictureUrl)
+            setString(5, user.profilePictureUrl)
             executeUpdate()
         }
     }
@@ -47,7 +47,7 @@ class UserService(
         with(connection.prepareStatement(UPDATE_USER)) {
             setString(1, user.userName)
             setString(2, user.email)
-            setNString(3, user.profilePictureUrl)
+            setString(3, user.profilePictureUrl)
             setObject(4, UUID.fromString(user.userId))
             executeUpdate()
         }
