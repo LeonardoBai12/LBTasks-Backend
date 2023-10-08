@@ -33,13 +33,14 @@ class UserService(
     }
 
     suspend fun createUser(user: UserData) = withContext(Dispatchers.IO) {
-        val statement = connection.prepareStatement(INSERT_USER)
-        statement.setObject(1, UUID.fromString(user.userId))
-        statement.setString(2, user.userName)
-        statement.setString(3, user.password)
-        statement.setString(4, user.email)
-        statement.setNString(5, user.profilePictureUrl)
-        statement.executeUpdate()
+        with(connection.prepareStatement(INSERT_USER)) {
+            setObject(1, UUID.fromString(user.userId))
+            setString(2, user.userName)
+            setString(3, user.password)
+            setString(4, user.email)
+            setNString(5, user.profilePictureUrl)
+            executeUpdate()
+        }
     }
 
     suspend fun updateUser(user: UserData) = withContext(Dispatchers.IO) {
