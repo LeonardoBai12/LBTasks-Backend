@@ -4,6 +4,7 @@ import io.lb.data.model.TaskCreateRequest
 import io.lb.data.model.TaskData
 import java.sql.Connection
 import java.sql.Statement
+import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -49,8 +50,8 @@ class TaskService(private val connection: Connection) {
 
     suspend fun insertTask(task: TaskCreateRequest): String = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(INSERT_TASK, Statement.RETURN_GENERATED_KEYS)
-        statement.setString(1, task.title)
-        statement.setString(2, task.userId)
+        statement.setObject(1, UUID.fromString(task.title))
+        statement.setObject(2, UUID.fromString(task.userId))
         statement.setString(3, task.description)
         statement.setString(4, task.taskType)
         statement.setString(5, task.deadlineDate)
@@ -94,7 +95,7 @@ class TaskService(private val connection: Connection) {
     suspend fun getTasksByUserId(userUUID: String): List<TaskData> = withContext(Dispatchers.IO) {
         val tasks = mutableListOf<TaskData>()
         val statement = connection.prepareStatement(SELECT_TASKS_BY_USER_ID)
-        statement.setString(1, userUUID)
+        statement.setObject(1, UUID.fromString(userUUID))
         val resultSet = statement.executeQuery()
 
         while (resultSet.next()) {
@@ -128,13 +129,13 @@ class TaskService(private val connection: Connection) {
         statement.setString(2, task.description)
         statement.setString(3, task.deadlineDate)
         statement.setString(4, task.deadlineTime)
-        statement.setString(5, id)
+        statement.setObject(5, UUID.fromString(id))
         statement.executeUpdate()
     }
 
     suspend fun deleteTask(id: String) = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(DELETE_TASK)
-        statement.setString(1, id)
+        statement.setObject(1, UUID.fromString(id))
         statement.executeUpdate()
     }
 }

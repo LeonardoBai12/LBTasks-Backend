@@ -32,7 +32,8 @@ fun Application.userRoutes(dbConnection: Connection) {
             val userData = UserData(
                 userName = user.userName,
                 password = hashedPassword,
-                email = user.email
+                email = user.email,
+                profilePictureUrl = user.profilePictureUrl,
             )
             userService.createUser(userData)
             call.respond(HttpStatusCode.Created, userData.userId)
@@ -44,7 +45,7 @@ fun Application.userRoutes(dbConnection: Connection) {
                 return@get
             }
             userService.getUserById(userId)?.let {
-                call.respond(HttpStatusCode.OK, it)
+                call.respond(HttpStatusCode.OK, it.copy(password = null))
             } ?: call.respond(HttpStatusCode.NotFound)
         }
 
@@ -69,6 +70,7 @@ fun Application.userRoutes(dbConnection: Connection) {
                 val updatedUser = it.copy(
                     userName = user.userName,
                     email = user.email,
+                    profilePictureUrl = user.profilePictureUrl,
                 )
                 userService.updateUser(updatedUser)
                 call.respond(HttpStatusCode.OK, userId)

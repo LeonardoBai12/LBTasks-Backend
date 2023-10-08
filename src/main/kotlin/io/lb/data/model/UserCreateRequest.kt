@@ -7,4 +7,5 @@ data class UserCreateRequest(
     val userName: String,
     val password: String,
     val email: String,
+    val profilePictureUrl: String? = null
 )

@@ -19,11 +19,11 @@ class UserService(
                     "     email VARCHAR(255) UNIQUE NOT NULL " +
                     ");"
         private const val SELECT_USER_BY_ID =
-            "SELECT user_id, user_name, password, email FROM user_data WHERE user_id = ?;"
+            "SELECT user_id, user_name, password, email, profile_picture FROM user_data WHERE user_id = ?;"
         private const val INSERT_USER =
-            "INSERT INTO user_data (user_id, user_name, password, email) VALUES (?, ?, ?, ?);"
+            "INSERT INTO user_data (user_id, user_name, password, email, profile_picture) VALUES (?, ?, ?, ?, ?);"
         private const val UPDATE_USER =
-            "UPDATE user_data SET user_name = ?, email = ? WHERE user_id = ?;"
+            "UPDATE user_data SET user_name = ?, email = ?, profile_picture = ? WHERE user_id = ?;"
         private const val DELETE_USER = "DELETE FROM user_data WHERE user_id = ?;"
     }
 
@@ -38,6 +38,7 @@ class UserService(
         statement.setString(2, user.userName)
         statement.setString(3, user.password)
         statement.setString(4, user.email)
+        statement.setNString(5, user.profilePictureUrl)
         statement.executeUpdate()
     }
 
@@ -45,7 +46,8 @@ class UserService(
         val statement = connection.prepareStatement(UPDATE_USER)
         statement.setString(1, user.userName)
         statement.setString(2, user.email)
-        statement.setObject(3, UUID.fromString(user.userId))
+        statement.setNString(3, user.profilePictureUrl)
+        statement.setObject(4, UUID.fromString(user.userId))
         statement.executeUpdate()
     }
 
@@ -66,6 +68,7 @@ class UserService(
                 userName = resultSet.getString("user_name"),
                 password = resultSet.getString("password"),
                 email = resultSet.getString("email"),
+                profilePictureUrl = resultSet.getNString("profile_picture"),
             )
         } else {
             null
