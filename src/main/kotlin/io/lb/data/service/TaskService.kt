@@ -4,6 +4,8 @@ import io.lb.data.model.TaskCreateRequest
 import io.lb.data.model.TaskData
 import java.sql.Connection
 import java.sql.Statement
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.UUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -56,8 +58,8 @@ class TaskService(private val connection: Connection) {
             setObject(2, UUID.fromString(task.userId))
             setString(3, task.description)
             setString(4, task.taskType)
-            setString(5, task.deadlineDate)
-            setString(6, task.deadlineTime)
+            setObject(5, LocalDate.parse(task.deadlineDate))
+            setObject(6, LocalTime.parse(task.deadlineTime))
             executeUpdate()
         }
 
@@ -69,7 +71,7 @@ class TaskService(private val connection: Connection) {
         }
     }
 
-    suspend fun getTaskById(id: String): TaskData = withContext(Dispatchers.IO) {
+    suspend fun getTaskById(id: String): TaskData? = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_TASK_BY_ID)
         statement.setString(1, id)
         val resultSet = statement.executeQuery()
@@ -91,7 +93,7 @@ class TaskService(private val connection: Connection) {
                 deadlineTime = deadlineTime,
             )
         } else {
-            throw Exception("Record not found")
+            null
         }
     }
 
@@ -130,8 +132,8 @@ class TaskService(private val connection: Connection) {
         with(connection.prepareStatement(UPDATE_TASK)) {
             setString(1, task.title)
             setString(2, task.description)
-            setString(3, task.deadlineDate)
-            setString(4, task.deadlineTime)
+            setObject(3, LocalDate.parse(task.deadlineDate))
+            setObject(4, LocalTime.parse(task.deadlineTime))
             setObject(5, UUID.fromString(id))
             executeUpdate()
         }

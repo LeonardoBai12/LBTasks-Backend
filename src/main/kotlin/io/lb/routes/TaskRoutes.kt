@@ -14,6 +14,7 @@ import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import io.lb.data.model.TaskCreateRequest
 import io.lb.data.model.TaskData
+import io.lb.data.model.TaskType
 import io.lb.data.service.TaskService
 import java.sql.Connection
 
@@ -26,6 +27,16 @@ fun Application.taskRoutes(dbConnection: Connection) {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
+
+            try {
+                TaskType.valueOf(task.taskType)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    "Invalid task type, should be one of those: ${TaskType.values()}"
+                )
+            }
+
             val id = taskService.insertTask(task)
             call.respond(HttpStatusCode.Created, id)
         }
@@ -35,17 +46,16 @@ fun Application.taskRoutes(dbConnection: Connection) {
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
             }
-            try {
-                val task = taskService.getTaskById(id)
-                call.respond(HttpStatusCode.OK, task)
-            } catch (e: Exception) {
-                call.respond(HttpStatusCode.NotFound)
+            val task = taskService.getTaskById(id) ?: run {
+                call.respond(HttpStatusCode.NotFound, "There is no task with such ID")
+                return@get
             }
+            call.respond(HttpStatusCode.OK, task)
         }
 
-        get("/api/tasksByUser/{id}") {
+        get("/api/tasksByUser") {
             try {
-                val userId = call.parameters["id"] ?: run {
+                val userId = call.parameters["userId"] ?: run {
                     call.respond(HttpStatusCode.BadRequest)
                     return@get
                 }
@@ -61,7 +71,26 @@ fun Application.taskRoutes(dbConnection: Connection) {
                 call.respond(HttpStatusCode.BadRequest)
                 return@put
             }
-            val task = call.receive<TaskData>()
+
+            taskService.getTaskById(id) ?: run {
+                call.respond(HttpStatusCode.NotFound, "There is no task with such ID")
+                return@put
+            }
+
+            val task = call.receiveNullable<TaskData>() ?: run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@put
+            }
+
+            try {
+                TaskType.valueOf(task.taskType)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.BadRequest,
+                    "Invalid task type, should be one of those: ${TaskType.values()}"
+                )
+            }
+
             taskService.updateTask(id, task)
             call.respond(HttpStatusCode.OK)
         }
@@ -71,6 +100,12 @@ fun Application.taskRoutes(dbConnection: Connection) {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
+
+            taskService.getTaskById(id) ?: run {
+                call.respond(HttpStatusCode.NotFound, "There is no task with such ID")
+                return@delete
+            }
+
             taskService.deleteTask(id)
             call.respond(HttpStatusCode.OK)
         }

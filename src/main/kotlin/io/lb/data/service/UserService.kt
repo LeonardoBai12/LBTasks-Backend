@@ -20,6 +20,8 @@ class UserService(
                     ");"
         private const val SELECT_USER_BY_ID =
             "SELECT user_id, user_name, password, email, profile_picture FROM user_data WHERE user_id = ?;"
+        private const val SELECT_USER_BY_EMAIL =
+            "SELECT user_id, user_name, password, email, profile_picture FROM user_data WHERE email = ?;"
         private const val INSERT_USER =
             "INSERT INTO user_data (user_id, user_name, password, email, profile_picture) VALUES (?, ?, ?, ?, ?);"
         private const val UPDATE_USER =
@@ -76,5 +78,13 @@ class UserService(
         } else {
             null
         }
+    }
+
+    suspend fun isEmailAlreadyInUse(email: String): Boolean = withContext(Dispatchers.IO) {
+        val statement = connection.prepareStatement(SELECT_USER_BY_EMAIL)
+        statement.setObject(1, UUID.fromString(email))
+        val resultSet = statement.executeQuery()
+
+        return@withContext resultSet.next()
     }
 }
