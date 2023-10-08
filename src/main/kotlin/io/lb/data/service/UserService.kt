@@ -71,7 +71,7 @@ class UserService(
                 userName = resultSet.getString("user_name"),
                 password = resultSet.getString("password"),
                 email = resultSet.getString("email"),
-                profilePictureUrl = resultSet.getNString("profile_picture"),
+                profilePictureUrl = resultSet.getString("profile_picture"),
             )
         } else {
             null
