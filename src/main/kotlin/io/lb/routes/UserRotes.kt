@@ -59,12 +59,16 @@ fun Application.userRoutes(dbConnection: Connection) {
             }
             val storedUser = userService.getUserById(userId)
 
+            storedUser?.password.takeIf { it.isNullOrEmpty() }?.let {
+                call.respond(HttpStatusCode.Unauthorized, "Invalid password")
+            }
+
             storedUser?.takeIf {
                 user.password.passwordCheck(it.password!!)
             }?.let {
-                val updatedUser = storedUser.copy(
-                    userName = it.userName,
-                    email = it.email,
+                val updatedUser = it.copy(
+                    userName = user.userName,
+                    email = user.email,
                 )
                 userService.updateUser(updatedUser)
                 call.respond(HttpStatusCode.OK, userId)

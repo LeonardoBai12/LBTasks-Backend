@@ -19,7 +19,7 @@ class UserService(
                     "     email VARCHAR(255) UNIQUE NOT NULL " +
                     ");"
         private const val SELECT_USER_BY_ID =
-            "SELECT user_id, user_name, email FROM user_data WHERE user_id = ?;"
+            "SELECT user_id, user_name, password, email FROM user_data WHERE user_id = ?;"
         private const val INSERT_USER =
             "INSERT INTO user_data (user_id, user_name, password, email) VALUES (?, ?, ?, ?);"
         private const val UPDATE_USER =
@@ -64,6 +64,7 @@ class UserService(
             UserData(
                 userId = resultSet.getString("user_id"),
                 userName = resultSet.getString("user_name"),
+                password = resultSet.getString("password"),
                 email = resultSet.getString("email"),
             )
         } else {

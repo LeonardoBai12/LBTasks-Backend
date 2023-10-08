@@ -8,5 +8,5 @@ fun String.encrypt(): String? {
 }
 
 fun String.passwordCheck(encryptedPassword: String): Boolean {
-    return BCrypt.checkpw(encryptedPassword, this)
+    return BCrypt.checkpw(this, encryptedPassword)
 }
