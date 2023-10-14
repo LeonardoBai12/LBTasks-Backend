@@ -1,10 +1,10 @@
 package io.lb.data.service
 
 import io.lb.data.model.UserData
-import java.sql.Connection
-import java.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.sql.Connection
+import java.util.*
 
 class UserService(
     private val connection: Connection,
@@ -12,12 +12,12 @@ class UserService(
     companion object {
         private const val CREATE_TABLE_USER_DATA =
             "CREATE TABLE IF NOT EXISTS user_data ( " +
-                    "     user_id UUID PRIMARY KEY, " +
-                    "     user_name VARCHAR(255) NOT NULL, " +
-                    "     password VARCHAR(255) NOT NULL, " +
-                    "     profile_picture VARCHAR(255), " +
-                    "     email VARCHAR(255) UNIQUE NOT NULL " +
-                    ");"
+                "     user_id UUID PRIMARY KEY, " +
+                "     user_name VARCHAR(255) NOT NULL, " +
+                "     password VARCHAR(255) NOT NULL, " +
+                "     profile_picture VARCHAR(255), " +
+                "     email VARCHAR(255) UNIQUE NOT NULL " +
+                ");"
         private const val SELECT_USER_BY_ID =
             "SELECT user_id, user_name, password, email, profile_picture FROM user_data WHERE user_id = ?;"
         private const val SELECT_USER_BY_EMAIL =

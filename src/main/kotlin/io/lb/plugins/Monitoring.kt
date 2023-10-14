@@ -1,9 +1,10 @@
 package io.lb.plugins
 
-import io.ktor.server.application.*
-import io.ktor.server.plugins.callloging.*
-import io.ktor.server.request.*
-import org.slf4j.event.*
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.plugins.callloging.CallLogging
+import io.ktor.server.request.path
+import org.slf4j.event.Level
 
 fun Application.configureMonitoring() {
     install(CallLogging) {

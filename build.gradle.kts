@@ -45,5 +45,5 @@ dependencies {
     implementation("io.ktor:ktor-server-sessions:$ktorVersion")
     implementation("org.mindrot:jbcrypt:0.4")
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation( "com.zaxxer:HikariCP:4.0.3")
+    implementation("com.zaxxer:HikariCP:4.0.3")
 }

@@ -6,8 +6,6 @@ import io.ktor.server.application.Application
 import io.lb.routes.taskRoutes
 import io.lb.routes.userRoutes
 import java.io.FileInputStream
-import java.sql.Connection
-import java.sql.DriverManager
 import java.util.*
 
 fun Application.configureDatabases() {

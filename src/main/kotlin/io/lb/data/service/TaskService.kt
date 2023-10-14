@@ -2,47 +2,46 @@ package io.lb.data.service
 
 import io.lb.data.model.TaskCreateRequest
 import io.lb.data.model.TaskData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.sql.Connection
 import java.sql.Statement
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.UUID
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class TaskService(private val connection: Connection) {
     companion object {
         private const val CREATE_TABLE_TASk =
             "CREATE TABLE IF NOT EXISTS task ( " +
-                    "     uuid UUID PRIMARY KEY, " +
-                    "     user_id UUID REFERENCES user_data(user_id) ON DELETE CASCADE, " +
-                    "     title VARCHAR(255) NOT NULL, " +
-                    "     description TEXT, " +
-                    "     task_type VARCHAR(50) NOT NULL, " +
-                    "     deadline_date DATE, " +
-                    "     deadline_time TIME, " +
-                    "     timestamp TIMESTAMPTZ DEFAULT NOW() NOT NULL " +
-                    ");"
+                "     uuid UUID PRIMARY KEY, " +
+                "     user_id UUID REFERENCES user_data(user_id) ON DELETE CASCADE, " +
+                "     title VARCHAR(255) NOT NULL, " +
+                "     description TEXT, " +
+                "     task_type VARCHAR(50) NOT NULL, " +
+                "     deadline_date DATE, " +
+                "     deadline_time TIME, " +
+                "     timestamp TIMESTAMPTZ DEFAULT NOW() NOT NULL " +
+                ");"
         private const val SELECT_TASKS_BY_USER_ID =
             "SELECT title, user_id, description, task_type, deadline_date, deadline_time " +
-                    "FROM task " +
-                    "WHERE user_id = ?;"
+                "FROM task " +
+                "WHERE user_id = ?;"
         private const val SELECT_TASK_BY_ID =
             "SELECT title, user_id, description, task_type, deadline_date, deadline_time " +
-                    "FROM task " +
-                    "WHERE uuid = ?;"
+                "FROM task " +
+                "WHERE uuid = ?;"
         private const val INSERT_TASK =
             "INSERT INTO task (title, user_id, description, task_type, deadline_date, deadline_time) " +
-                    "VALUES (?, ?, ?, ?, ?, ?);"
+                "VALUES (?, ?, ?, ?, ?, ?);"
         private const val UPDATE_TASK =
             "UPDATE task SET " +
-                    "    title = ?, " +
-                    "    description = ?, " +
-                    "    deadline_date = ?, " +
-                    "    deadline_time = ? " +
-                    "WHERE uuid = ?;"
+                "    title = ?, " +
+                "    description = ?, " +
+                "    deadline_date = ?, " +
+                "    deadline_time = ? " +
+                "WHERE uuid = ?;"
         private const val DELETE_TASK = "DELETE FROM task WHERE uuid = ?;"
-
     }
 
     init {

@@ -1,7 +1,7 @@
 package io.lb.data.model
 
-import java.util.UUID
 import kotlinx.serialization.Serializable
+import java.util.UUID
 
 @Serializable
 data class UserData(

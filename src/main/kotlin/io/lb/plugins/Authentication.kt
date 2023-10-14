@@ -9,7 +9,7 @@ import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.UserIdPrincipal
 import io.ktor.server.auth.jwt.jwt
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 fun Application.configureAuth() {
     install(Authentication) {
