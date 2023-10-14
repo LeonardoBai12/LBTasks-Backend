@@ -4,7 +4,7 @@ import io.lb.data.model.UserData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.sql.Connection
-import java.util.*
+import java.util.UUID
 
 class UserService(
     private val connection: Connection,

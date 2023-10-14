@@ -6,7 +6,7 @@ import io.ktor.server.application.Application
 import io.lb.routes.taskRoutes
 import io.lb.routes.userRoutes
 import java.io.FileInputStream
-import java.util.*
+import java.util.Properties
 
 fun Application.configureDatabases() {
     val dbConnection = connectToPostgres(embedded = true).connection
