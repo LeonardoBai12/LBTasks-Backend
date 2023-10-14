@@ -14,7 +14,7 @@ The application is built using the following technologies:
 
 * [Ktor](https://ktor.io) for asynchronous server application.
 * [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) for asynchronous programming.
-* [PostgreSQL]([https://developer.android.com/reference/androidx/lifecycle/ViewModel](https://www.postgresql.org)) for data management.
+* [PostgreSQL](https://www.postgresql.org) for data management.
 * [JUnit 5](https://junit.org/junit5/docs/current/user-guide) for unit testing (Not yet implemented).
 * [MockK](https://mockk.io) for mocking objects in unit tests (Not yet implemented).
 * [Github Actions](https://docs.github.com/pt/actions/learn-github-actions) for Continuous Integration/Continuous Deployment (CI/CD).
