@@ -11,7 +11,6 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import io.lb.data.model.TaskCreateRequest
-import io.lb.data.model.TaskData
 import io.lb.data.model.TaskType
 import io.lb.data.service.TaskService
 import java.sql.Connection
