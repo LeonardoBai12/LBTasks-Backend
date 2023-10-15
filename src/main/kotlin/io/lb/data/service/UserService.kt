@@ -82,7 +82,7 @@ class UserService(
 
     suspend fun isEmailAlreadyInUse(email: String): Boolean = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_USER_BY_EMAIL)
-        statement.setObject(1, UUID.fromString(email))
+        statement.setString(1, email)
         val resultSet = statement.executeQuery()
 
         return@withContext resultSet.next()

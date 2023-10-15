@@ -11,7 +11,6 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.routing
 import io.lb.data.model.TaskCreateRequest
-import io.lb.data.model.TaskData
 import io.lb.data.model.TaskType
 import io.lb.data.service.TaskService
 import java.sql.Connection
@@ -33,9 +32,12 @@ fun Application.taskRoutes(dbConnection: Connection) {
                     HttpStatusCode.BadRequest,
                     "Invalid task type, should be one of those: ${TaskType.values()}"
                 )
+                return@post
             }
 
-            val id = taskService.insertTask(task)
+            val id = taskService.insertTask(
+                task
+            )
             call.respond(HttpStatusCode.Created, id)
         }
 
@@ -60,7 +62,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
                 val tasks = taskService.getTasksByUserId(userId)
                 call.respond(HttpStatusCode.OK, tasks)
             } catch (e: Exception) {
-                call.respond(HttpStatusCode.NotFound)
+                call.respond(HttpStatusCode.NotFound, "No tasks for such user")
             }
         }
 
@@ -75,7 +77,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
                 return@put
             }
 
-            val task = call.receiveNullable<TaskData>() ?: run {
+            val task = call.receiveNullable<TaskCreateRequest>() ?: run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@put
             }
@@ -87,10 +89,11 @@ fun Application.taskRoutes(dbConnection: Connection) {
                     HttpStatusCode.BadRequest,
                     "Invalid task type, should be one of those: ${TaskType.values()}"
                 )
+                return@put
             }
 
             taskService.updateTask(id, task)
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK, id)
         }
 
         delete("/api/deleteTask") {
@@ -105,7 +108,7 @@ fun Application.taskRoutes(dbConnection: Connection) {
             }
 
             taskService.deleteTask(id)
-            call.respond(HttpStatusCode.OK)
+            call.respond(HttpStatusCode.OK, "Task deleted successfully")
         }
     }
 }
