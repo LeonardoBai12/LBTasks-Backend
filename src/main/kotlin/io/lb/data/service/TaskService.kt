@@ -24,7 +24,7 @@ class TaskService(private val connection: Connection) {
                 "     timestamp TIMESTAMPTZ DEFAULT NOW() NOT NULL " +
                 ");"
         private const val SELECT_TASKS_BY_USER_ID =
-            "SELECT title, user_id, description, task_type, deadline_date, deadline_time " +
+            "SELECT uuid, title, user_id, description, task_type, deadline_date, deadline_time " +
                 "FROM task " +
                 "WHERE user_id = ?;"
         private const val SELECT_TASK_BY_ID =
@@ -32,8 +32,8 @@ class TaskService(private val connection: Connection) {
                 "FROM task " +
                 "WHERE uuid = ?;"
         private const val INSERT_TASK =
-            "INSERT INTO task (title, user_id, description, task_type, deadline_date, deadline_time) " +
-                "VALUES (?, ?, ?, ?, ?, ?);"
+            "INSERT INTO task (uuid, title, user_id, description, task_type, deadline_date, deadline_time) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?);"
         private const val UPDATE_TASK =
             "UPDATE task SET " +
                 "    title = ?, " +
@@ -53,12 +53,13 @@ class TaskService(private val connection: Connection) {
         val statement = connection.prepareStatement(INSERT_TASK, Statement.RETURN_GENERATED_KEYS)
 
         with(statement) {
-            setObject(1, UUID.fromString(task.title))
-            setObject(2, UUID.fromString(task.userId))
-            setString(3, task.description)
-            setString(4, task.taskType)
-            setObject(5, LocalDate.parse(task.deadlineDate))
-            setObject(6, LocalTime.parse(task.deadlineTime))
+            setObject(1, UUID.randomUUID())
+            setString(2, task.title)
+            setObject(3, UUID.fromString(task.userId))
+            setString(4, task.description)
+            setString(5, task.taskType)
+            setObject(6, LocalDate.parse(task.deadlineDate))
+            setObject(7, LocalTime.parse(task.deadlineTime))
             executeUpdate()
         }
 
@@ -72,7 +73,7 @@ class TaskService(private val connection: Connection) {
 
     suspend fun getTaskById(id: String): TaskData? = withContext(Dispatchers.IO) {
         val statement = connection.prepareStatement(SELECT_TASK_BY_ID)
-        statement.setString(1, id)
+        statement.setObject(1, UUID.fromString(id))
         val resultSet = statement.executeQuery()
 
         if (resultSet.next()) {
@@ -127,7 +128,7 @@ class TaskService(private val connection: Connection) {
         return@withContext tasks
     }
 
-    suspend fun updateTask(id: String, task: TaskData) = withContext(Dispatchers.IO) {
+    suspend fun updateTask(id: String, task: TaskCreateRequest) = withContext(Dispatchers.IO) {
         with(connection.prepareStatement(UPDATE_TASK)) {
             setString(1, task.title)
             setString(2, task.description)
